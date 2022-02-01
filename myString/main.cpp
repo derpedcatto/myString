@@ -4,8 +4,10 @@ using namespace std;
 
 int main()
 {
-	String a("123");
-	a.Print();
+	setlocale(LC_ALL, "Russian");
+	srand(time(0));
+	String a("abc");
 
-	cout << a.GetCharAt(1);
+	cout << endl;
+	a.Print();
 }

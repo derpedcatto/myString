@@ -2,9 +2,9 @@
 class String
 {
 private:
-	char* arr;
-	unsigned int length;
+	unsigned int length = 1;
 	unsigned int capacity = 80;
+	char* arr = new char[capacity];
 
 public:
 	/*Constructors*/
@@ -29,6 +29,41 @@ public:
 	const void Print() const;
 	const void PrintLn() const;
 	const char GetCharAt(unsigned int index) const;
+	const char* GetCharArray() const;
+	const bool Contains(const String& other);
+	const bool EndsWith(const String& other);
+	const bool StartsWith(const String& other);
+	const bool Equals(const String& other);
+
+	void Clear();
+	void GetLine();
+	void Concat(const String& other);
+	void Concat(const char* other);
+	void Concat(int other);
+	void Concat(double other);
+	void Remove(int index);
+	void Remove(int start, int count);
+	void Replace(char R, char Z);
+	void Replace(String& R, String& Z);
+	void TrimEnd();
+	void TrimStart();
+	void Trim();
+	void Reverse();
+	void SortAZ();
+	void SortZA();
+	void Shuffle();
+	void RandomFill();
+
+	int CompareTo(String other);
+	int CompareTo(char* other);
+	int IndexOf(char& src);
+	int IndexOf(String& src);
+	int LastIndexOf(char& src);
+	int LastIndexOf(String& src);
+
+	String ToUpper();
+	String ToLower();
+	String* Split(char separator, int& pieces);
 
 	/*Operators*/
 
