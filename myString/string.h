@@ -35,6 +35,7 @@ public:
 	const bool StartsWith(const String& other);
 	const bool Equals(const String& other);
 
+	void SetString(const char* arr, unsigned int capacity);
 	void Clear();
 	void GetLine();
 	void Concat(const String& other);
@@ -66,15 +67,32 @@ public:
 	String* Split(char separator, int& pieces);
 
 	/*Operators*/
+	friend String operator+(const String& left, const String& right);
+	friend String operator+(const String& left, const char* right);
+	friend String operator+(const char* left, const String& right);
+	friend String operator+(const String& left, const char right);
+	friend String operator+(const char left, const String& right);
+	String& operator=(const String& other);
+	String& operator+=(const String& other);
+	String& operator+=(const char* other);
+	String& operator()(const char* other);
+	char operator[](int index);
+	bool operator==(const String& other);
+	bool operator!=(const String& other);
+	bool operator>(const String& other);
+	bool operator<(const String& other);
+	bool operator>=(const String& other);
+	bool operator<=(const String& other);
+	operator char* ();
+	operator int();
+	operator double();
 
-	/*Dest-Set-Get*/
+	/*Dest-Get*/
 	~String();
 
 	const char* GetString() const;
 	const int GetLength() const;
 	const int GetCapacity() const;
-
-	void SetString(const char* arr, unsigned int capacity);
 };
 
 /*

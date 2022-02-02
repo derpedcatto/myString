@@ -10,6 +10,7 @@ using namespace std;
 /*bugs*/
 // Replace (String) ensure capacity
 // Replace (String) b(aa) c(a) error
+// Equals ?
 
 /*
 - Split
@@ -66,12 +67,34 @@ const bool String::StartsWith(const String& other)
 }
 const bool String::Equals(const String& other)
 {
-	if (strcmp(arr, other.arr) < 0)
+	if (length != other.length)
 		return false;
-	else
-		return true;
+
+	for (int i = 0; i < length; i++)
+	{
+		if (arr[i] != other.arr[i])
+			return false;
+	}
+
+	return true;
 }
 
+void String::SetString(const char* arr, unsigned int capacity)
+{
+	length = strlen(arr);
+	while (true)
+	{
+		if (length >= capacity)
+		{
+			delete[] this->arr;
+			capacity = length * 1.5;
+			this->arr = new char[capacity];
+		}
+		else
+			break;
+	}
+	strcpy_s(this->arr, length + 1, arr);
+}
 void String::Clear()
 {
 	arr[0] = '\0';
@@ -92,14 +115,14 @@ void String::Concat(const String& other)
 		SetString(arr, capacity);
 	}
 
-	length += other.length;
-
 	int count = 0;
-	for (int i = length - other.length; i < length; i++)
+	for (int i = length; i < length + other.length + 1; i++)
 	{
 		arr[i] = other.arr[count];
 		count++;
 	}
+
+	length += other.length;
 }
 void String::Concat(const char* other)
 {
@@ -111,14 +134,13 @@ void String::Concat(const char* other)
 		SetString(arr, capacity);
 	}
 
-	length += charlength;
-
 	int count = 0;
-	for (int i = length - charlength; i < length; i++)
+	for (int i = length; i < length + charlength + 1; i++)
 	{
-		arr[i] = arr[count];
+		arr[i] = other[count];
 		count++;
 	}
+	length += charlength;
 }
 void String::Concat(int other)
 {
@@ -428,9 +450,198 @@ String* String::Split(char separator, int& pieces)
 }
 
 /*Operators*/
+String& String::operator=(const String& other)
+{
+	capacity = other.capacity;
+	length = other.length;
+	strcpy_s(arr, length + 1, other.arr);
+	return *this;
+}
+String& String::operator+=(const String& other)
+{
+	Concat(other);
+	return *this;
+}
+String& String::operator+=(const char* other)
+{
+	Concat(other);
+	return *this;
+}
+String& String::operator()(const char* other)
+{
+	SetString(other, capacity);
+	return *this;
+}
+String operator+(const String& left, const String& right)
+{
+	String newstring(left.capacity + right.capacity);
+	newstring.length = left.length + right.length;
+
+	for (int i = 0; i < left.length + right.length + 1; i++)
+	{
+		if (i < left.length)
+		{
+			newstring.arr[i] = left.arr[i];
+		}
+		else
+		{
+			newstring.arr[i] = right.arr[i - left.length];
+		}
+	}
+
+	return newstring;
+}
+String operator+(const String& left, const char* right)
+{
+	String newstring(left.capacity + strlen(right));
+	newstring.length = left.length + strlen(right);
+
+	for (int i = 0; i < left.length + strlen(right) + 1; i++)
+	{
+		if (i < left.length)
+		{
+			newstring.arr[i] = left.arr[i];
+		}
+		else
+		{
+			newstring.arr[i] = right[i - left.length];
+		}
+	}
+
+	return newstring;
+}
+String operator+(const char* left, const String& right)
+{
+	String newstring(strlen(left) + right.capacity);
+	newstring.length = strlen(left) + right.length;
+
+	for (int i = 0; i < strlen(left) + right.length + 1; i++)
+	{
+		if (i < strlen(left))
+		{
+			newstring.arr[i] = left[i];
+		}
+		else
+		{
+			newstring.arr[i] = right.arr[i - strlen(left)];
+		}
+	}
+
+	return newstring;
+}
+String operator+(const String& left, const char right)
+{
+	String newstring(left.capacity + 1);
+	newstring.length = left.length + 1;
+
+	for (int i = 0; i < left.length; i++)
+	{
+		newstring.arr[i] = left.arr[i];
+	}
+
+	newstring.arr[left.length] = right;
+	newstring.arr[left.length + 1] = '\0';
+	return newstring;
+}
+String operator+(const char left, const String& right)
+{
+	String newstring(right.capacity + 1);
+	newstring.length = right.length + 1;
+
+	newstring.arr[0] = left;
+	for (int i = 0; i < right.length + 1; i++)
+	{
+		newstring.arr[i + 1] = right.arr[i];
+	}
+	return newstring;
+}
+char String::operator[](int index)
+{
+	if (index < length)
+		return arr[index];
+	else
+		return -1;
+}
+bool String::operator==(const String& other)
+{
+	return Equals(other);
+}
+bool String::operator!=(const String& other)
+{
+	return !(Equals(other));
+}
+bool String::operator<(const String& other)
+{
+	return length > other.length;
+}
+bool String::operator>(const String& other)
+{
+	return length < other.length;
+}
+bool String::operator>=(const String& other)
+{
+	return length >= other.length;
+}
+bool String::operator<=(const String& other)
+{
+	return length <= other.length;
+}
+String::operator char* ()
+{
+	return arr;
+}
+String::operator int()
+{
+	int result = 0;
+	for (int i = 0; i < length; i++)
+	{
+		if (arr[i] < 48 || arr[i] > 57)
+			return -1;
+
+		result += (arr[i] - '0');
+		result *= 10;
+	}
+
+	return result /= 10;
+}
+String::operator double()
+{
+	double result = 0;
+	int i = 0;
+	int count = 0;
+	bool isCount = false;
+	for (;i < length; i++)
+	{
+		if (arr[i] == 46 && isCount == true)
+			return -1;
+
+		if (arr[i] == 46 && isCount == false)
+		{
+			isCount = true;
+			continue;
+		}
 
 
-/*Dest-Get-Set*/
+		if (arr[i] < 48 || arr[i] > 57)
+			return -1;
+
+		result += (arr[i] - '0');
+		result *= 10;
+
+		if (isCount)
+			count++;
+	}
+
+	result /= 10;
+
+	for (int j = 0; j < count; j++)
+		result *= 0.1;
+
+
+	return result;
+}
+
+/*Dest-Get*/
 String::~String()
 {
 	if (arr != nullptr) delete arr;
@@ -447,21 +658,4 @@ const int String::GetLength() const
 const int String::GetCapacity() const
 {
 	return capacity;
-}
-
-void String::SetString(const char* arr, unsigned int capacity)
-{
-	length = strlen(arr);
-	while (true)
-	{
-		if (length >= capacity)
-		{
-			delete[] this->arr;
-			capacity = length * 1.5;
-			this->arr = new char[capacity];
-		}
-		else
-			break;
-	}
-	strcpy_s(this->arr, length + 1, arr);
 }
