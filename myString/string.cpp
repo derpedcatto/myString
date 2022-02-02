@@ -1,6 +1,4 @@
 #include "string.h"
-#include <iostream>
-using namespace std;
 
 /*problems?*/
 // concat capacity ?
@@ -450,6 +448,16 @@ String* String::Split(char separator, int& pieces)
 }
 
 /*Operators*/
+ostream& operator << (ostream& output, const String& src)
+{
+	src.Print();
+	return output;
+}
+istream& operator >>(istream& input, String& src)
+{
+	src.GetLine();
+	return input;
+}
 String& String::operator=(const String& other)
 {
 	capacity = other.capacity;

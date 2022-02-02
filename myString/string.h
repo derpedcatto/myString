@@ -1,4 +1,7 @@
 #pragma once
+#include <iostream>
+using namespace std;
+
 class String
 {
 private:
@@ -61,12 +64,13 @@ public:
 	int IndexOf(String& src);
 	int LastIndexOf(char& src);
 	int LastIndexOf(String& src);
-
 	String ToUpper();
 	String ToLower();
 	String* Split(char separator, int& pieces);
 
 	/*Operators*/
+	friend ostream& operator<<(ostream& output, const String& src);
+	friend istream& operator>>(istream& input, String& src);
 	friend String operator+(const String& left, const String& right);
 	friend String operator+(const String& left, const char* right);
 	friend String operator+(const char* left, const String& right);
@@ -76,6 +80,7 @@ public:
 	String& operator+=(const String& other);
 	String& operator+=(const char* other);
 	String& operator()(const char* other);
+
 	char operator[](int index);
 	bool operator==(const String& other);
 	bool operator!=(const String& other);
